@@ -1,0 +1,26 @@
+{
+  "name": "astar",
+  "version": "1.0.0",
+  "description": "a* search",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "astar"
+  ],
+  "author": "creatxr",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/creatxrgithub/astar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/creatxrgithub/astar/issues"
+  },
+  "homepage": "https://github.com/creatxrgithub/astar#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "graphical": "^1.0.4"
+  }
+}
