@@ -8,3 +8,4 @@
 ## function listNeighborNode(node);
 ## function mapcheck(node);
 
+<img src='demo.gif'>
