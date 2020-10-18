@@ -20,7 +20,5 @@
   },
   "homepage": "https://github.com/creatxrgithub/astar#readme",
   "dependencies": {},
-  "devDependencies": {
-    "graphical": "^1.0.4"
-  }
+  "devDependencies": {}
 }
