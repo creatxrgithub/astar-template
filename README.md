@@ -1,4 +1,4 @@
-# astar
+# astar (a*) path finder
 
 npm install astar-template
 
