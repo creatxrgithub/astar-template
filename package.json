@@ -1,24 +1,26 @@
 {
-  "name": "astar",
+  "name": "astar-template",
   "version": "1.0.0",
-  "description": "a* search",
+  "description": "a star (a*) path finder",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/creatxrgithub/astar-template.git"
+  },
   "keywords": [
-    "astar"
+    "a*",
+    "a",
+    "star",
+    "path",
+    "finder"
   ],
   "author": "creatxr",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/creatxrgithub/astar.git"
-  },
   "bugs": {
-    "url": "https://github.com/creatxrgithub/astar/issues"
+    "url": "https://github.com/creatxrgithub/astar-template/issues"
   },
-  "homepage": "https://github.com/creatxrgithub/astar#readme",
-  "dependencies": {},
-  "devDependencies": {}
+  "homepage": "https://github.com/creatxrgithub/astar-template#readme"
 }
