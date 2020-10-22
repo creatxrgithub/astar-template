@@ -8,6 +8,17 @@ let finder = new PathFinder();
 
 finder.debug = function (node) {}
 
+......
+
+let apath = finder.astar(fromNode, toNode);
+
+if(apath==null) {
+  //cannot arrive
+} else {
+  //apath is array of nodes
+}
+
+
 # must implement your：
 
 ## function finder.debug(node);
