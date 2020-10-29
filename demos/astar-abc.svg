@@ -3,7 +3,7 @@
 	transform="matrix(1,0,-0.577,1,-180,0)">
 <script type="text/javascript" xlink:href="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js@3.0/dist/svg.min.js"></script>
 <script type="text/javascript" xlink:href="abc.js"></script>
-<script type="text/javascript" xlink:href="https://creatxrgithub.github.io/astar-template/index.js"></script>
+<script type="text/javascript" xlink:href="astar-template.js"></script>
 <script type="text/javascript" xlink:href="later-todo.js"></script>
 <script type="text/javascript">
 <![CDATA[
