@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg id="drawing" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+	transform="matrix(1,0,-0.577,1,-180,0)">
+<script type="text/javascript" xlink:href="svg.min.js"></script>
+<script type="text/javascript" xlink:href="abc.js"></script>
+<script type="text/javascript" xlink:href="astar-template.js"></script>
+<script type="text/javascript" xlink:href="later-todo.js"></script>
+<script type="text/javascript">
+<![CDATA[
+
+
+//初始化網格
+let A_MAX = 50;
+let B_MAX = 50;
+let C_MAX = 0;
+let radius = 5;
+let sin30radius = sin30 * radius;
+let cos30radius = cos30 * radius;
+let abcUnit = radius*cos30*2;
+let BASE_X = 0;
+let BASE_Y = 0;
+if(C_MAX!=0) {
+	BASE_X = radius * A_MAX * 2 + radius * 6;
+	BASE_Y = radius * B_MAX * 2 + radius * 9;
+}
+let draw = SVG('#drawing');
+
+
+function printABC(na, nb, nc, color) {
+	let node = new ABCNode(na, nb, nc);
+	node = getCoordinateNode(node);
+	let [a,b,c] = [node.a, node.b, node.c];
+	let x = abcUnit/2+a*abcUnit+b*abcUnit/2-c*abcUnit/2;
+	let y = b*abcUnit*sin60+c*abcUnit*sin60+radius;
+	let pathD = calcPolygonPointsByOrigin(x+BASE_X, y+BASE_Y, radius);
+	draw.polygon(pathD).fill(color).stroke({ width: 1, color:'grey' }).rotate(30);
+}
+
+
+
+
+//設置起點、終點、障礙
+let A_START = 10;
+let B_START = 20;
+let C_START = 0;
+let A_END = 30;
+let B_END = 30;
+let C_END = 0;
+let abc = new Array();
+for(let a=0; a<A_MAX; a++) abc[a] = new Array();
+for(let a=0; a<A_MAX; a++) for(let b=0; b<B_MAX; b++) abc[a][b] = 1;
+//for(let a=0; a<A_MAX; a++) for(let b=0; b<B_MAX; b++) for(let c=0; c<C_MAX; c++) abc[a][b][c]=0;
+abc[A_START][B_START] = 0xB;
+abc[A_END][B_END] = 0xE;
+for(let b=5; b<30; b++) abc[20][b] = 0xF;
+for(let b=20; b<45; b++) abc[25][b] = 0xF;
+for(let a=0; a<A_MAX; a++) for(let b=0; b<B_MAX; b++) {
+	switch(abc[a][b]) {
+		case 1: printABC(a,b,0,'#999'); break;
+		case 0xB: printABC(a,b,0,'#ff0'); break;
+		case 0xE: printABC(a,b,0,'#0f0'); break;
+		case 0xF: printABC(a,b,0,'#f00'); break;
+	}
+}
+
+
+
+let finder = new PathFinder();
+
+finder.isSameNode = function(a, b) {
+	let m = getCoordinateNode(a);
+	let n = getCoordinateNode(b);
+	if(m.a==n.a && m.b==n.b && m.c==n.c) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+finder.calcH = function(curNode, toNode) {
+	return (Math.abs(toNode.a-curNode.a) + Math.abs(toNode.b-curNode.b) + Math.abs(toNode.c-curNode.c))*10;
+}
+
+//設Ａ軸移動耗費，Ｂ軸移動耗費，Ｃ軸移動耗费
+let aw=10, bw=5, cw=1;
+finder.listNeighborNode = function(curNode) {
+	let oo = getNeighborNodes(curNode);
+	oo[0].g = oo[0].parent.g + aw;
+	oo[1].g = oo[0].parent.g + aw;
+	oo[2].g = oo[0].parent.g + bw;
+	oo[3].g = oo[0].parent.g + bw;
+	oo[4].g = oo[0].parent.g + cw;
+	oo[5].g = oo[0].parent.g + cw;
+	return oo;
+}
+
+finder.mapCheck = function(node) {
+	let a = node.a-node.c;
+	let b = node.b+node.c;
+	if(a<0||b<0||a>=A_MAX||b>=B_MAX) return false;  //地圖越界檢查
+	if(abc[a][b]==0xF) {  //不可抵達點
+		return false;
+	} else {
+		return true;
+	}
+};
+
+
+let duration = 5;
+
+let laterTodo = new LaterTodo(duration, printABC);
+
+
+let DEBUG = true;
+finder.debug = function(node) {
+	if(DEBUG) {
+		laterTodo.todo(node.a, node.b, node.c,'#00FF00');
+	}
+}
+
+let fromNode = new ABCNode(A_START, B_START, C_START);
+let toNode = new ABCNode(A_END, B_END, C_END);
+let apath = finder.astar(fromNode, toNode);
+
+
+for(let i=0; i<apath.length; i++) {
+	laterTodo.todo(apath[i].a, apath[i].b, apath[i].c, '#000000')
+}
+
+
+//alert(laterTodo.callback);
+//alert(apath);
+
+
+]]>
+</script>
+</svg>
