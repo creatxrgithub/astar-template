@@ -44,7 +44,8 @@ class ABCNode {
 function getCoordinate(a,b,c) {
 	let r = new Array();
 	r[0]=-a; r[1]=b; r[2]=-c;
-	r.sort( (a,b) => { return Math.abs(a)-Math.abs(b); } );
+//	r.sort( (a,b) => { return Math.abs(a)-Math.abs(b); } );
+	r.sort();
 	let n = r[1];
 	r[0]=a+n; r[1]=b-n; r[2]=c+n;
 	return r;
@@ -53,7 +54,8 @@ function getCoordinate(a,b,c) {
 function getCoordinateNode(node) {
 	let r = new Array();
 	r[0]=-node.a; r[1]=node.b; r[2]=-node.c;
-	r.sort( (a,b) => { return Math.abs(a)-Math.abs(b); } );
+//	r.sort( (a,b) => { return Math.abs(a)-Math.abs(b); } );
+	r.sort();
 	let n = r[1];
 	let rNode = new ABCNode();
 	rNode.a = node.a+n;
