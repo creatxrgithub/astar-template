@@ -39,7 +39,7 @@ class ABCNode {
 }
 
 /**
- * 計算座標：TODO 座標常有兩種表示法
+ * 計算座標
  */
 function getCoordinate(a,b,c) {
 	let r = new Array();
