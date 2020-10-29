@@ -28,3 +28,6 @@ if(apath==null) {
 ## function finder.mapcheck(node);
 
 <img src='demo.gif'>
+
+![Alt text](demos/astar-abc.svg)
+<img src='demos/astar-abc.svg'>
