@@ -29,5 +29,5 @@ if(apath==null) {
 
 <img src='demo.gif'>
 
-![Alt text](demos/astar-abc.svg)
-<img src='demos/astar-abc.svg'>
+![Alt text](./demos/astar-abc.svg)
+<img src='./demos/astar-abc.svg'>
