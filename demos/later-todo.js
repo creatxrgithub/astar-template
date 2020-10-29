@@ -10,7 +10,7 @@ class LaterTodo {
 		}
 		*/
 		if(typeof callback != 'function') {
-			throw `${callback} is not a function`;
+//			throw `${callback} is not a function`;
 		}
 		this.callback = callback;
 	}
@@ -18,8 +18,8 @@ class LaterTodo {
 	todo(...args) {
 		//*
 		setTimeout(() => {
-			this.callback(...args);
-		}, this.duration*this.durationStep++);
+				this.callback(...args);
+			}, this.duration*this.durationStep++);
 		//*/
 		/*//如果不用 es6 的箭頭函數，需保存指鍼
 		let self = this;
@@ -27,6 +27,15 @@ class LaterTodo {
 			self.callback(...args);
 		}, self.duration*self.durationStep++);
 		//*/
+	}
+
+	todoCallback(callback, ...args) {
+		if(typeof callback != 'function') {
+			throw `${callback} is not a function`;
+		}
+		setTimeout(() => {
+				callback(...args);
+			}, this.duration*this.durationStep++);
 	}
 }
 
