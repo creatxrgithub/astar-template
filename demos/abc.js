@@ -38,25 +38,38 @@ class ABCNode {
 	}
 }
 
+
+function isSameSymbol(m,n) {
+	return ((m^n)>>1)<0 ? false : true;
+}
+
+function calcN(a,b,c) {
+	let arr = new Array();
+	//n=-a
+	arr[0] = [-a, Math.abs(b+a)+Math.abs(c-a)];
+	//n=b
+	arr[1] = [b, Math.abs(a+b)+Math.abs(c+b)];
+	//n=-c
+	arr[2] = [-c, Math.abs(a-c)+Math.abs(b+c)];
+	arr.sort( (m,n) => {
+			return m[1] - n[1];
+		});
+	return arr[0][0];
+}
+
+
+
+
 /**
  * 計算座標
  */
 function getCoordinate(a,b,c) {
-	let r = new Array();
-	r[0]=-a; r[1]=b; r[2]=-c;
-//	r.sort( (a,b) => { return Math.abs(a)-Math.abs(b); } );
-	r.sort();
-	let n = r[1];
-	r[0]=a+n; r[1]=b-n; r[2]=c+n;
-	return r;
+	let n = calcN(a,b,c);
+	return [a+n, b-n, c+n];
 }
 
 function getCoordinateNode(node) {
-	let r = new Array();
-	r[0]=-node.a; r[1]=node.b; r[2]=-node.c;
-//	r.sort( (a,b) => { return Math.abs(a)-Math.abs(b); } );
-	r.sort();
-	let n = r[1];
+	let n = calcN(node.a, node.b, node.c);
 	let rNode = new ABCNode();
 	rNode.a = node.a+n;
 	rNode.b = node.b-n;
@@ -97,4 +110,4 @@ function getNeighborNodes(curNode) {
 }
 
 
-module.exports = {ABCNode, calcPolygonPoints, calcPolygonPointsByOrigin, getCoordinate, getCoordinateNode, isSameNode, getNeighborNodes};
+module.exports = {ABCNode, calcPolygonPoints, calcPolygonPointsByOrigin, getCoordinate, getCoordinateNode, isSameNode, getNeighborNodes, isSameSymbol};
