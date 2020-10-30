@@ -12,7 +12,7 @@ finder.debug = function (node) {}
 
 let apath = finder.astar(fromNode, toNode);
 
-if(apath==null) {
+if(apath.length=0) {
   //cannot arrive
 } else {
   //apath is array of nodes
