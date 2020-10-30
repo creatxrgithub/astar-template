@@ -3,6 +3,7 @@
 <head>
 <title>astar</title>
 <script type="text/javascript" src="jquery-3.5.1.min.js"></script>
+<script src="jcanvas.min.js"></script>
 <script type="text/javascript" src="svg.min.js"></script>
 <script type="text/javascript" src="abc.js"></script>
 <script type="text/javascript" src="astar-template.js"></script>
@@ -10,7 +11,24 @@
 </head>
 <body>
 
-<div id="drawing"></div>
+<script>
+window.onerror = function errorHandler(msg,url,line) {
+	$('#err').append(line + ' : ' + url + ' : ' + msg);
+	//console.log(arguments);
+	return false;
+}
+</script>
+
+<div id="err"></div>
+<div id="msg"></div>
+
+<table border="1">
+<tr>
+<td width="30%"><canvas id="showing" width="500" height="500" style="opacity:0.5； border:1px solid #000000;" /></td>
+<td width="70%"><div id="drawing"></div></td>
+</tr>
+</table>
+
 
 
 <script async>
@@ -28,7 +46,8 @@ if(C_MAX!=0) {
 	BASE_X = radius * A_MAX * 2 + radius * 6;
 	BASE_Y = radius * B_MAX * 2 + radius * 9;
 }
-let draw = SVG().addTo('#drawing').size(1000,1000).matrix(1,0,-0.577,1,0,0);
+let draw = SVG().addTo('#drawing').size(500,500);//.matrix(1,0,-0.577,1,0,0);
+//matrix() 放這會超出畫布，改在 printABC() 裏使用，而 canvas 則可以直接使畫布傾斜。
 //.viewbox(0, 0, 300, 140);
 
 
@@ -39,9 +58,13 @@ function printABC(na, nb, nc, color) {
 	let x = abcUnit/2+a*abcUnit+b*abcUnit/2-c*abcUnit/2;
 	let y = b*abcUnit*sin60+c*abcUnit*sin60+radius;
 	let pathD = calcPolygonPointsByOrigin(x+BASE_X, y+BASE_Y, radius);
-	draw.polygon(pathD).fill(color).stroke({ width: 1, color:'grey' }).rotate(30);
+	draw.polygon(pathD).fill(color).stroke({ width: 1, color:'grey' }).rotate(30).matrix(1,0,-0.577,1,0,0);
 }
 
+$('#showing').get(0).getContext("2d").transform(1,0,-0.577,1,0,0);  //將畫布傾斜，使得ＡＢＣ平面三維第一象限（正Ａ軸與正Ｂ軸）的象限顯示如同平面直角座標
+function demoABC(na, nb, nc, color) {
+	$('#showing').drawPolygon({fillStyle:color, strokeStyle:'#FFFFFF', x:radius+abcUnit/2+na*abcUnit+nb*abcUnit/2-nc*abcUnit/2, y:radius+nb*abcUnit*Math.sin(Math.PI/3)+nc*abcUnit*Math.sin(Math.PI/3), radius:radius, sides:6, rotate:30, concavity:0});
+}
 
 //設置起點、終點、障礙
 let A_START = 10;
@@ -60,10 +83,10 @@ for(let b=5; b<30; b++) abc[20][b] = 0xF;
 for(let b=20; b<45; b++) abc[25][b] = 0xF;
 for(let a=0; a<A_MAX; a++) for(let b=0; b<B_MAX; b++) {
 	switch(abc[a][b]) {
-		case 1: printABC(a,b,0,'#999'); break;
-		case 0xB: printABC(a,b,0,'#ff0'); break;
-		case 0xE: printABC(a,b,0,'#0f0'); break;
-		case 0xF: printABC(a,b,0,'#f00'); break;
+		case 1: printABC(a,b,0,'#999'); demoABC(a,b,0,'#999'); break;
+		case 0xB: printABC(a,b,0,'#ff0'); demoABC(a,b,0,'#ff0'); break;
+		case 0xE: printABC(a,b,0,'#0f0'); demoABC(a,b,0,'#0f0'); break;
+		case 0xF: printABC(a,b,0,'#f00'); demoABC(a,b,0,'#f00'); break;
 	}
 }
 
@@ -118,6 +141,7 @@ let DEBUG = true;
 finder.debug = function(node) {
 	if(DEBUG) {
 		laterTodo.todo(node.a, node.b, node.c,'#00FF00');
+		laterTodo.todoCallback(demoABC, node.a, node.b, node.c,'#00FF00');
 	}
 }
 
@@ -127,8 +151,8 @@ let apath = finder.astar(fromNode, toNode);
 
 
 for(let i=0; i<apath.length; i++) {
-//	laterTodo.todo(apath[i].a, apath[i].b, apath[i].c, '#000000');
-	laterTodo.todoCallback(printABC, apath[i].a, apath[i].b, apath[i].c, '#000000');
+	laterTodo.todo(apath[i].a, apath[i].b, apath[i].c, '#000000');
+	laterTodo.todoCallback(demoABC, apath[i].a, apath[i].b, apath[i].c, '#000000');
 }
 
 
