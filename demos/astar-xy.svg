@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg id="drawing" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+	fill-opacity="1">
+<script type="text/javascript" xlink:href="svg.min.js"></script>
+<script type="text/javascript" xlink:href="xy.js"></script>
+<script type="text/javascript" xlink:href="astar-template.js"></script>
+<script type="text/javascript" xlink:href="later-todo.js"></script>
+<script type="text/javascript">
+<![CDATA[
+
+let draw = SVG('#drawing');
+
+
+function printXY(nx, ny, color) {
+	draw.rect(5, 5).fill(color).stroke({ width: 1, color:'grey' }).move(3+nx*5, 3+ny*5);
+}
+
+
+let DEBUG = true;
+let X_MAX = 100;
+let Y_MAX = 100;
+let X_START = 10;
+let Y_START = 30;
+let X_END = 51;
+let Y_END = 57;
+let map = new Array();
+for(let x=0; x<X_MAX; x++) { map[x] = new Array(); }  //由於 JS 沒有二維數組，這兩行起到聲明二維數組的作用
+
+for(let x=0; x<X_MAX; x++) {  //數組初始化
+	for(let y=0; y<Y_MAX; y++) {
+		map[x][y] = 1;
+	}
+}
+map[X_START][Y_START] = 0xB;  //起點 B:begin
+map[X_END][Y_END] = 0xE;  //終點 E:end
+for(let y=10; y<60; y++) { map[44][y]=0xF; }  //設置障碍 F:fail
+for(let y=40; y<80; y++) { map[50][y]=0xF; }  //設置障碍 F:fail
+
+
+
+for(let x=0; x<X_MAX; x++) {
+	for(let y=0; y<Y_MAX; y++) {
+		switch(map[x][y]) {
+			case 1: printXY(x,y,'#999'); break;
+			case 0xB: printXY(x,y,'#ff0'); break;
+			case 0xE: printXY(x,y,'#0f0'); break;
+			case 0xF: printXY(x,y,'#f00'); break;
+		}
+	}
+}
+
+
+let finder = new PathFinder();
+
+finder.isSameNode = function(a, b) {
+	if(a.x==b.x&&a.y==b.y) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+finder.calcH = function(curNode, toNode) {
+	return Math.abs(toNode.x-curNode.x) + Math.abs(toNode.y-curNode.y);
+}
+
+//設X軸移動耗費，Y軸移動耗費，斜行移動耗费
+let xw=10, yw=5, sw=1;
+finder.listNeighborNode = function(curNode) {
+	let oo = getNeighborNodes(curNode);
+	oo[0].g = oo[0].parent.g + xw;
+	oo[1].g = oo[1].parent.g + xw;
+	oo[2].g = oo[2].parent.g + yw;
+	oo[3].g = oo[3].parent.g + yw;
+	oo[4].g = oo[4].parent.g + sw;
+	oo[5].g = oo[5].parent.g + sw;
+	oo[6].g = oo[6].parent.g + sw;
+	oo[7].g = oo[7].parent.g + sw;
+	return oo;
+}
+
+finder.mapCheck = function(node) {
+	if(node.x<0||node.y<0||node.x>=X_MAX||node.y>=Y_MAX) return false;  //地圖越界檢查
+	if(map[node.x][node.y]==0xF) {  //不可抵達點
+		return false;
+	} else {
+		return true;
+	}
+};
+
+
+
+let duration = 5;
+let laterTodo = new LaterTodo(duration, printXY);
+
+finder.debug = function(node) {
+	if(DEBUG) {
+		laterTodo.todo(node.x, node.y,'#00FF00');
+	}
+}
+
+let fromNode = new XYNode(X_START, Y_START);
+let toNode = new XYNode(X_END, Y_END);
+let apath = finder.astar(fromNode, toNode);
+
+for(let i=0; i<apath.length; i++) {
+	laterTodo.todo(apath[i].x, apath[i].y,'#ffff00');
+}
+
+]]>
+</script>
+</svg>
