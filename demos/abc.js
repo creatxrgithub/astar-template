@@ -80,12 +80,12 @@ function getCoordinateNode(node) {
 
 
 /**
- * 由圖可知：矢量 va
+ * 由圖可知：矢量 dA+dC=dB
+ * 由於 [a+n, b-n, c+n] 是恆等變換
  */
-function isSameNode(a, b) {
-	let m = getCoordinateNode(a);
-	let n = getCoordinateNode(b);
-	if(m.a==n.a && m.b==n.b && m.c==n.c) {
+function isSameNode(x, y) {
+	let n = x.a - y.a;
+	if((x.c-y.c)==n && (x.b-y.b)==-n) {
 		return true;
 	} else {
 		return false;
