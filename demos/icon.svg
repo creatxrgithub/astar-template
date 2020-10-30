@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg id="drawing" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+	fill-opacity="0.5">
+<script type="text/javascript" xlink:href="svg.min.js"></script>
+<script type="text/javascript" xlink:href="abc.js"></script>
+<script type="text/javascript">
+<![CDATA[
+
+let A_MAX = 5;
+let B_MAX = 5;
+let C_MAX = 5;
+let radius = 9;
+let sin30radius = sin30 * radius;
+let cos30radius = cos30 * radius;
+let abcUnit = radius*cos30*2;
+let BASE_X = 0;
+let BASE_Y = 0;
+if(C_MAX!=0) {
+	BASE_X = radius * A_MAX * 2 + radius * 6;
+	BASE_Y = radius * B_MAX * 2 + radius * 9;
+}
+let draw = SVG('#drawing');
+
+function printABC(na, nb, nc, color) {
+	let node = new ABCNode(na, nb, nc);
+	node = getCoordinateNode(node);
+	let [a,b,c] = [node.a, node.b, node.c];
+	let x = abcUnit/2+a*abcUnit+b*abcUnit/2-c*abcUnit/2;
+	let y = b*abcUnit*sin60+c*abcUnit*sin60+radius;
+	let pathD = calcPolygonPointsByOrigin(x+BASE_X, y+BASE_Y, radius);
+	draw.polygon(pathD).fill(color).stroke({ width: 1, color:'grey' }).rotate(30);
+}
+
+
+
+for(let a=-A_MAX; a<=A_MAX; a++) {
+	for(let b=-B_MAX; b<=B_MAX; b++) {
+		for(let c=-C_MAX; c<=C_MAX; c++) {
+			let abcNode = new ABCNode(a,b,c);
+			let absNode = getCoordinateNode(abcNode);
+			if(!isSameNode(abcNode,absNode)) continue;
+
+			let color = 'grey';
+			if(absNode.a==0 && absNode.b==0 && absNode.c==0) {
+				color = '#ffffff';
+			} else if(absNode.a!=0 && absNode.b==0 && absNode.c==0) {
+				color = '#ff0000';
+			} else if(absNode.a==0 && absNode.b!=0 && absNode.c==0) {
+				color = '#00ff00';
+			} else if(absNode.a==0 && absNode.b==0 && absNode.c!=0) {
+				color = '#0000ff';
+			} else if(absNode.c == 0) {
+				color = '#0000aa';
+			} else if(absNode.b == 0) {
+				color = '#00aa00';
+			} else if(absNode.a == 0) {
+				color = '#aa0000';
+			}
+			printABC(absNode.a,absNode.b,absNode.c,color);
+		}
+	}
+}
+
+]]>
+</script>
+</svg>
