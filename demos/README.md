@@ -1,6 +1,8 @@
-# use third-part lib (check head in html or svg files)
+# required third-part lib (check head in html or svg files)
 
 svgjs, jquery, jcanvas, 
+
+please put them in same folder, also put astar-template.js in same folder.
 
 cannot show in github. cause it cannot link js files or cannot run js in github.
 
