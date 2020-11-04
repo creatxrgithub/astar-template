@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>capture</title>
+</head>
+<body>
+<div id="err"></div>
+<div id="msg"></div>
+<button id="startBtn" async>startCapture</button>
+<button id="stopBtn">stopCapture</button>
+<br>
+<table border="1">
+<tr>
+<td width="25%"><video id="video" autoplay></video></td>
+</tr>
+</table>
+</body>
+</html>
+
+
+
+<script>
+window.onerror = function errorHandler(msg,url,line) {
+	$('#err').append(line + ' : ' + url + ' : ' + msg);
+	//console.log(arguments);
+	return false;
+}
+</script>
+
+
+
+<script>
+const videoElem = document.getElementById('video');
+
+let displayMediaOptions = {
+	video: {
+		cursor: "always",
+		displaySurface: "browser"
+	},
+	audio: false
+};
+
+
+async function startCapture(displayMediaOptions) {
+  let captureStream = null;
+//  try {
+    captureStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+/*
+  } catch(err) {
+    console.error("Error: " + err);
+  }
+  */
+  //return captureStream;
+
+//  $('#msg').append(captureStream.MediaStreamConstraints);
+  videoElem.srcObject = captureStream;
+//videoElem.srcObject = $('#showing').captureStream();
+}
+
+function stopCapture(evt) {
+  let tracks = videoElem.srcObject.getTracks();
+
+  tracks.forEach(track => track.stop());
+  videoElem.srcObject = null;
+}
+
+//$('#startBtn').on('click', startCapture);
+//$('#stopBtn').on('click', stopCapture);
+
+
+/**
+ * document.querySelector('#startBtn').addEventListener('click', startCapture);
+ */
+document.getElementById('startBtn').addEventListener('click', startCapture);
+document.getElementById('stopBtn').addEventListener('click', stopCapture);
+
+
+</script>
