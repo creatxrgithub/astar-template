@@ -6,6 +6,7 @@
 <body>
 <div id="err"></div>
 <div id="msg"></div>
+<input type="checkbox" id="recordBx">record
 <button id="startBtn" async>startCapture</button>
 <button id="stopBtn">stopCapture</button>
 <br>
@@ -31,6 +32,8 @@ window.onerror = function errorHandler(msg,url,line) {
 
 <script>
 const videoElem = document.getElementById('video');
+let mediaRecorder = null;
+let recordedBlobs = [];
 
 let displayMediaOptions = {
 	video: {
@@ -55,6 +58,33 @@ async function startCapture(displayMediaOptions) {
 //  $('#msg').append(captureStream.MediaStreamConstraints);
   videoElem.srcObject = captureStream;
 //videoElem.srcObject = $('#showing').captureStream();
+
+
+	if(document.getElementById('recordBx').checked) {
+		//不支持 {mimeType: 'video/mp4'}
+		mediaRecorder = new MediaRecorder(captureStream,  {mimeType: 'video/webm'});
+		recordedBlobs = [];
+
+		mediaRecorder.ondataavailable = function (event) {
+			if (event.data && event.data.size > 0) {
+				recordedBlobs.push(event.data);
+			}
+		}
+
+		mediaRecorder.onstop = function (event) {
+			const blob = new Blob(recordedBlobs, {type: 'video/mp4'});
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.style.display = 'none';
+			a.href = url;
+			a.download = 'download.mp4';
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(url);
+		}
+
+		mediaRecorder.start(Number.MAX_SAFE_INTEGER);
+	}
 }
 
 function stopCapture(evt) {
@@ -62,6 +92,8 @@ function stopCapture(evt) {
 
   tracks.forEach(track => track.stop());
   videoElem.srcObject = null;
+
+  if(mediaRecorder!=null)  mediaRecorder.stop();
 }
 
 //$('#startBtn').on('click', startCapture);
@@ -76,3 +108,5 @@ document.getElementById('stopBtn').addEventListener('click', stopCapture);
 
 
 </script>
+
+
