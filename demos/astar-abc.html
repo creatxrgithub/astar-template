@@ -10,6 +10,18 @@
 <script type="text/javascript" src="later-todo.js"></script>
 </head>
 <body>
+<div id="err"></div>
+<div id="msg"></div>
+<table border="1">
+<tr>
+<td width="25%"><canvas id="showing" width="440" height="440" style="opacity:0.5； border:1px solid #000000; backgroup:#ffffff" /></td>
+<td width="25%"><div id="drawing"></div></td>
+<td width="25%"><svg id="svg" transform="matrix(1,0,-0.577,1,0,0)"></svg></td>
+<td width="25%"><video id="video" autoplay></video></td>
+</tr>
+</table>
+</body>
+</html>
 
 <script>
 window.onerror = function errorHandler(msg,url,line) {
@@ -19,19 +31,8 @@ window.onerror = function errorHandler(msg,url,line) {
 }
 </script>
 
-<div id="err"></div>
-<div id="msg"></div>
 
-<table border="1">
-<tr>
-<td width="30%"><canvas id="showing" width="500" height="500" style="opacity:0.5； border:1px solid #000000;" /></td>
-<td width="70%"><div id="drawing"></div></td>
-</tr>
-</table>
-
-
-
-<script async>
+<script>
 //初始化網格
 let A_MAX = 50;
 let B_MAX = 50;
@@ -155,15 +156,49 @@ for(let i=0; i<apath.length; i++) {
 	laterTodo.todoCallback(demoABC, apath[i].a, apath[i].b, apath[i].c, '#000000');
 }
 
-
-
 </script>
 
-</body>
-</html>
 
 
-<script async>
+<script>
+//document.getElementById
+//document.querySelector
+const src = $('#showing').get(0);
+const dest = $('#video').get(0);
+const stream = src.captureStream();
+dest.srcObject = stream;
+</script>
 
 
+<script>
+//不支持 {mimeType: 'video/mp4'}
+const mediaRecorder = new MediaRecorder(stream,  {mimeType: 'video/webm'});
+let recordedBlobs = [];
+
+mediaRecorder.ondataavailable = function (event) {
+	if (event.data && event.data.size > 0) {
+		recordedBlobs.push(event.data);
+	}
+}
+
+mediaRecorder.onstop = function (event) {
+	const blob = new Blob(recordedBlobs, {type: 'video/mp4'});
+	const url = window.URL.createObjectURL(blob);
+	const a = document.createElement('a');
+	a.style.display = 'none';
+	a.href = url;
+	a.download = 'download.mp4';
+	document.body.appendChild(a);
+	a.click();
+	window.URL.revokeObjectURL(url);
+}
+
+mediaRecorder.start(Number.MAX_SAFE_INTEGER);
+
+
+function stopRecorder() {
+	mediaRecorder.stop();
+}
+
+laterTodo.todoCallback(stopRecorder);
 </script>
