@@ -10,6 +10,10 @@
 <button id="startBtn" async>startCapture</button>
 <button id="stopBtn">stopCapture</button>
 <br>
+ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 output.mp4
+<br>
+https://trac.ffmpeg.org/wiki/Capture/Desktop
+<br>
 <table border="1">
 <tr>
 <td width="25%"><video id="video" autoplay></video></td>
