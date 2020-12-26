@@ -39,6 +39,7 @@ for(let a=-A_MAX; a<=A_MAX; a++) {
 			let abcNode = new ABCNode(a,b,c);
 			let absNode = getCoordinateNode(abcNode);
 			if(!isSameNode(abcNode,absNode)) continue;
+			if(Math.abs(absNode.a)>A_MAX || Math.abs(absNode.b)>B_MAX || Math.abs(absNode.c)>C_MAX) continue;
 
 			let color = 'grey';
 			if(absNode.a==0 && absNode.b==0 && absNode.c==0) {
