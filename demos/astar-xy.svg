@@ -3,7 +3,7 @@
 	fill-opacity="1">
 <script type="text/javascript" xlink:href="svg.min.js"></script>
 <script type="text/javascript" xlink:href="xy.js"></script>
-<script type="text/javascript" xlink:href="astar-template.js"></script>
+<script type="text/javascript" xlink:href="../astar-template.js"></script>
 <script type="text/javascript" xlink:href="later-todo.js"></script>
 <script type="text/javascript">
 <![CDATA[
