@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>icon</title>
+<script type="text/javascript" src="jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="jcanvas.min.js"></script>
+<script type="text/javascript" src="abc.js"></script>
+</head>
+<body>
+<div id="err"></div>
+<div id="msg"></div>
+<table border="1">
+<tr><td><canvas id="icon" width="440" height="440" style="opacity:1; border:1px; solid #000000; backgroup:#ffffff" /></td></tr>
+</table>
+</body>
+</html>
+
+
+<script>
+window.onerror = function errorHandler(msg,url,line) {
+	$('#err').append(line + ' : ' + url + ' : ' + msg);
+	//console.log(arguments);
+	return false;
+}
+</script>
+
+
+<script>
+let A_MAX = 5;
+let B_MAX = 5;
+let C_MAX = 5;
+let radius = 9;
+let sin30radius = sin30 * radius;
+let cos30radius = cos30 * radius;
+let abcUnit = radius*cos30*2;
+let BASE_X = 0;
+let BASE_Y = 0;
+if(C_MAX!=0) {
+	BASE_X = radius * A_MAX * 2 + radius * 6;
+	BASE_Y = radius * B_MAX * 2 + radius * 9;
+}
+let draw = $('#icon');
+let offset = radius*2*(A_MAX+2.5);
+draw.attr('width', offset*2+radius*2);
+draw.attr('height', offset*2+radius*2);
+
+
+function printABC(na, nb, nc, color) {
+	let node = new ABCNode(na, nb, nc);
+	node = getCoordinateNode(node);
+	let [a,b,c] = [node.a, node.b, node.c];
+	let x = abcUnit/2+a*abcUnit+b*abcUnit/2-c*abcUnit/2;
+	let y = b*abcUnit*sin60+c*abcUnit*sin60+radius;
+	let pathD = calcPolygonPointsByOrigin(x+BASE_X, y+BASE_Y, radius);
+	draw.drawPolygon({opacity:0.5, fillStyle:color, strokeStyle:'#FFFFFF', x:radius+abcUnit/2+na*abcUnit+nb*abcUnit/2-nc*abcUnit/2+offset-radius, y:radius+nb*abcUnit*Math.sin(Math.PI/3)+nc*abcUnit*Math.sin(Math.PI/3)+offset, radius:radius, sides:6, rotate:30, concavity:0});
+}
+
+
+
+for(let a=-A_MAX; a<=A_MAX; a++) {
+	for(let b=-B_MAX; b<=B_MAX; b++) {
+		for(let c=-C_MAX; c<=C_MAX; c++) {
+			let abcNode = new ABCNode(a,b,c);
+			let absNode = getCoordinateNode(abcNode);
+			if(!isSameNode(abcNode,absNode)) continue;
+			if(Math.abs(absNode.a)>A_MAX || Math.abs(absNode.b)>B_MAX || Math.abs(absNode.c)>C_MAX) continue;
+
+			let color = 'grey';
+			if(absNode.a==0 && absNode.b==0 && absNode.c==0) {
+				color = '#ffffff';
+			} else if(absNode.a!=0 && absNode.b==0 && absNode.c==0) {
+				color = '#ff0000';
+			} else if(absNode.a==0 && absNode.b!=0 && absNode.c==0) {
+				color = '#00ff00';
+			} else if(absNode.a==0 && absNode.b==0 && absNode.c!=0) {
+				color = '#0000ff';
+			} else if(absNode.c == 0) {
+				color = '#0000aa';
+			} else if(absNode.b == 0) {
+				color = '#00aa00';
+			} else if(absNode.a == 0) {
+				color = '#aa0000';
+			}
+			printABC(absNode.a,absNode.b,absNode.c,color);
+		}
+	}
+}
+</script>
