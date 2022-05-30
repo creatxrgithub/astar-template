@@ -5,12 +5,13 @@
 <script type="text/javascript" src="jquery-3.6.0.min.js"></script>
 <script type="text/javascript" src="jcanvas.min.js"></script>
 <script type="text/javascript" src="abc.js"></script>
+<script type="text/javascript" src="browserify-svgpath.js"></script>
 </head>
 <body>
 <div id="err"></div>
 <div id="msg"></div>
-<table border="1">
-<tr><td><canvas id="icon" width="440" height="440" style="opacity:1; border:1px; solid #000000; backgroup:#ffffff" /></td></tr>
+<table border="0">
+<tr><td><canvas id="icon" width="440" height="440" style="opacity:1; border:1px solid #000000; background:#ffffff" /></td></tr>
 </table>
 </body>
 </html>
@@ -36,13 +37,17 @@ let abcUnit = radius*cos30*2;
 let BASE_X = 0;
 let BASE_Y = 0;
 if(C_MAX!=0) {
-	BASE_X = radius * A_MAX * 2 + radius * 6;
-	BASE_Y = radius * B_MAX * 2 + radius * 9;
+	BASE_X = radius * A_MAX * 2 + radius * 4;
+	BASE_Y = radius * B_MAX * 2 + radius * 5;
 }
 let draw = $('#icon');
 let offset = radius*2*(A_MAX+2.5);
 draw.attr('width', offset*2+radius*2);
 draw.attr('height', offset*2+radius*2);
+
+//getContext('2d') works on DOM element, where var canvas = $('#myCanvas'); return a jQuery object but not a DOM element.
+//let ctx = draw[0].getContext('2d');
+let ctx = draw.get(0).getContext('2d');
 
 
 function printABC(na, nb, nc, color) {
@@ -52,7 +57,31 @@ function printABC(na, nb, nc, color) {
 	let x = abcUnit/2+a*abcUnit+b*abcUnit/2-c*abcUnit/2;
 	let y = b*abcUnit*sin60+c*abcUnit*sin60+radius;
 	let pathD = calcPolygonPointsByOrigin(x+BASE_X, y+BASE_Y, radius);
-	draw.drawPolygon({opacity:0.5, fillStyle:color, strokeStyle:'#FFFFFF', x:radius+abcUnit/2+na*abcUnit+nb*abcUnit/2-nc*abcUnit/2+offset-radius, y:radius+nb*abcUnit*Math.sin(Math.PI/3)+nc*abcUnit*Math.sin(Math.PI/3)+offset, radius:radius, sides:6, rotate:30, concavity:0});
+	//draw.drawPolygon({opacity:0.5, fillStyle:color, strokeStyle:'#FFFFFF', x:radius+abcUnit/2+na*abcUnit+nb*abcUnit/2-nc*abcUnit/2+BASE_X, y:radius+nb*abcUnit*Math.sin(Math.PI/3)+nc*abcUnit*Math.sin(Math.PI/3)+BASE_Y, radius:radius, sides:6, rotate:30, concavity:0});
+	//draw.drawPolygon({opacity:0.25, fillStyle:color, strokeStyle:'#FFFFFF', x:radius+abcUnit/2+na*abcUnit+nb*abcUnit/2-nc*abcUnit/2+offset-radius, y:radius+nb*abcUnit*Math.sin(Math.PI/3)+nc*abcUnit*Math.sin(Math.PI/3)+offset, radius:radius, sides:6, rotate:30, concavity:0});
+	//*
+	let pts = pathD.split(/\s+/g);
+	ctx.strokeStyle = '#000';
+	ctx.lineWidth = 1;
+	ctx.fillStyle = color;
+	ctx.globalAlpha=0.25;
+	let d = '';
+	for (let i=0; i<pts.length; i++) {
+		[x,y] = pts[i].split('\,');
+		if (i===0) {
+			d += `M ${x} ${y}`;
+		} else {
+			d += ` L ${x} ${y}`;
+		}
+	}
+	d += ' Z';
+	//use browserify to convert libs svgpath and svg-path-bounds to run in browser
+	let [left, top, right, bottom] = window.svgpathBounds(d);
+	d = window.svgpath(d).rotate(30, left+(right-left)/2, top+(bottom-top)/2);
+	let path = new Path2D(d);
+	ctx.stroke(path);
+	ctx.fill(path);
+	//*/
 }
 
 
